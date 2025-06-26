@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Footer: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    // Simulate submission
+    setSubmitted(true);
+    setEmail('');
+    // TODO: Integrate actual newsletter service API here
+  };
+
   return (
     <footer className="w-full bg-black border-t border-white px-6 md:px-12 lg:px-20 py-16 text-[#dbc4b2]">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
         {/* Brand Info */}
         <div>
           <h3 className="text-4xl font-serif mb-4 uppercase tracking-wide">Hikky's Hair</h3>
@@ -28,8 +49,12 @@ const Footer: React.FC = () => {
         {/* Contact & Socials */}
         <div>
           <h4 className="text-lg font-semibold mb-4 uppercase">Contact</h4>
-          <p className="text-sm mb-2">Email: <a href="mailto:info@hikkiyhair.com" className="underline">info@hikkiyhair.com</a></p>
-          <p className="text-sm mb-6">Phone: <a href="tel:+2348123456789" className="underline">+234 812 345 6789</a></p>
+          <p className="text-sm mb-2">
+            Email: <a href="mailto:info@hikkiyhair.com" className="underline">info@hikkiyhair.com</a>
+          </p>
+          <p className="text-sm mb-6">
+            Phone: <a href="tel:+2348123456789" className="underline">+234 812 345 6789</a>
+          </p>
 
           <div className="flex space-x-4">
             {/* Instagram */}
@@ -55,6 +80,32 @@ const Footer: React.FC = () => {
               </svg>
             </a>
           </div>
+        </div>
+
+        {/* Newsletter Signup */}
+        <div>
+          <h4 className="text-lg font-semibold mb-4 uppercase">Sign up for our Newsletter</h4>
+          {submitted ? (
+            <p className="text-green-400 text-sm">Thank you for subscribing!</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+              <input
+                type="email"
+                placeholder="Your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="px-4 py-2 rounded text-black placeholder-gray-500 focus:outline-none"
+                required
+              />
+              {error && <p className="text-red-500 text-xs">{error}</p>}
+              <button
+                type="submit"
+                className="bg-[#cbb7a5] text-black font-semibold py-2 rounded hover:bg-[#bba18e] transition-colors duration-300"
+              >
+                Subscribe
+              </button>
+            </form>
+          )}
         </div>
       </div>
 

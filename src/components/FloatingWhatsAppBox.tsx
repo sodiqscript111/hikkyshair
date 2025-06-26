@@ -13,7 +13,7 @@ const FloatingWhatsAppBox: React.FC<FloatingWhatsAppBoxProps> = ({ whatsappLink 
       aria-label="Chat with us on WhatsApp"
       className="
         fixed bottom-4 right-4 z-50 flex items-center justify-center
-        bg-green-500 text-white rounded-full shadow-lg
+        bg-[#f2e7dd] text-black rounded-full shadow-lg
         transition-transform transform hover:scale-105
         px-4 py-3 md:py-3 md:px-5
         text-sm md:text-base

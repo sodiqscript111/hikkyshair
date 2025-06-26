@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import ChevronUpIcon from '@heroicons/react/24/outline/ChevronUpIcon';
@@ -14,7 +14,6 @@ interface AccordionItemProps {
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, isOpen, onClick }) => {
-  // Define contentVariants with explicit Variants type from framer-motion
   const contentVariants: Variants = {
     hidden: {
       opacity: 0,
@@ -29,20 +28,20 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, isOpen, o
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-[#e8d9cc] rounded-lg overflow-hidden bg-[#fffaf6]">
       <button
         onClick={onClick}
-        className="w-full px-4 py-4 flex justify-between items-center bg-white focus:outline-none active:bg-gray-50 transition"
+        className="w-full px-4 py-4 flex justify-between items-center bg-[#fffaf6] focus:outline-none active:bg-[#f7eee6] transition"
         aria-expanded={isOpen}
         aria-controls={`accordion-${title.replace(/\s+/g, '-')}`}
       >
-        <span className="text-base sm:text-lg font-semibold text-left text-[#0E0E0E]">
+        <span className="text-base sm:text-lg font-semibold text-left text-[#1a1a1a]">
           {title}
         </span>
         {isOpen ? (
-          <ChevronUpIcon className="w-5 h-5 text-gray-600" />
+          <ChevronUpIcon className="w-5 h-5 text-[#6b4e3e]" />
         ) : (
-          <ChevronDownIcon className="w-5 h-5 text-gray-600" />
+          <ChevronDownIcon className="w-5 h-5 text-[#6b4e3e]" />
         )}
       </button>
 
@@ -56,7 +55,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, isOpen, o
             variants={contentVariants}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 text-sm sm:text-base text-gray-700 leading-relaxed">
+            <div className="px-4 pb-4 text-sm sm:text-base text-[#3c3c3c] leading-relaxed">
               {content}
             </div>
           </motion.div>
@@ -92,11 +91,11 @@ const WhyChooseUsSection: React.FC = () => {
   ];
 
   return (
-    <section className="bg-white py-14 sm:py-20 lg:py-24 font-sans">
+    <section className="bg-[#f2e7dd] py-14 sm:py-20 lg:py-24 font-sans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left Column */}
-        <div className="relative flex items-center justify-center min-h-[200px] sm:min-h-[300px] md:min-h-[400px] bg-white rounded-xl border border-gray-100 p-6 md:p-12 shadow-sm">
-          <h2 className="text-center md:text-left text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0E0E0E] leading-tight">
+        <div className="relative flex items-center justify-center min-h-[200px] sm:min-h-[300px] md:min-h-[400px] bg-[#fffaf6] rounded-xl border border-[#e8d9cc] p-6 md:p-12 shadow-sm">
+          <h2 className="text-center md:text-left text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
             Why Choose Us?
           </h2>
         </div>

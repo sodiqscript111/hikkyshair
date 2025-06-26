@@ -8,6 +8,7 @@ import DiscountPopup from '../components/DiscountPopup'; // Import DiscountPopup
 import FloatingDiscountBox from '../components/FloatingDiscountBox'; // Import FloatingDiscountBox
 import FloatingWhatsAppBox from '../components/FloatingWhatsAppBox'; // Import FloatingWhatsAppBox
 import SummerCollectionSlider from '../components/SummerCollectionSlider'; // Import SummerCollectionSlider
+import AboutUsSection from '@/components/AboutUsSection';
 
 const Home = () => {
   // State to manage the visibility of the discount popup
@@ -27,6 +28,10 @@ const Home = () => {
       <ProductSlider />
       <HikkiyHairSection />
       <SummerCollectionSlider />
+      <AboutUsSection />
+      
+      {/* Why Choose Us Section */}
+      {/* This section can be customized further based on your design needs */}
       <WhyChooseUsSection />
 
       {/* Floating Discount Box - positioned at the bottom left */}

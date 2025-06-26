@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../data/products';
 import { products } from '../data/products'; // Assuming products data is exported from this file
@@ -76,7 +76,7 @@ const ShopAllPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[70px] font-inter">
+    <div className="w-full py-6 px-6 sm:px-12 lg:px-24 mt-[180px] font-inter">
       {/* Header */}
       <div className="text-center mb-10">
         <h1
@@ -113,7 +113,7 @@ const ShopAllPage: React.FC = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Map over displayedProducts instead of original 'products' */}
         {displayedProducts.map((product) => (
           <div key={product.id} className="product-card">
