@@ -1,25 +1,21 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import type { Variants } from "framer-motion";
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence} from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
   ShoppingCartIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
   Bars3Icon,
-} from "@heroicons/react/24/outline";
-// import { useCart } from '../CartContext'; // Original import, commented out
-import AnnouncementBanner from './AnnouncementBanner.tsx'; // Import the AnnouncementBanner - ensure this file is in the same directory as Navbar.jsx
+} from '@heroicons/react/24/outline';
+import AnnouncementBanner from './AnnouncementBanner'; // Ensure this file is in the same directory as Navbar.tsx
 
 // --- Mock useCart for demonstration ---
-// Since CartContext was not provided, a simple mock is used to prevent compilation errors.
-// In a real application, you would ensure your CartContext.js or CartContext.tsx file
-// exists at the correct path (e.g., '../CartContext').
 const useCart = () => {
-  // Return a mock totalItems, or implement a simple state if needed for testing
   return { totalItems: 0 }; // Defaulting to 0 items for demonstration
 };
-// --- End Mock useCart ---
 
 // --- Type Definitions ---
 interface SubmenuItem {
@@ -37,74 +33,78 @@ interface NavItemWithLink {
   path: string;
 }
 
-// Union type to represent either a link item OR a submenu item
 type NavItem = NavItemWithLink | NavItemWithSubmenu;
 
 const navItems: NavItem[] = [
-  { label: "Home", path: "/" },
-  { label: "Book Us", path: "/book" },
+  { label: 'Home', path: '/' },
+  { label: 'Book Us', path: '/book' },
   {
-    label: "Straight",
+    label: 'Straight',
     submenu: [
-      { label: "Luxe Straight", slug: "luxe-straight" },
-      { label: "Bone Straight", slug: "bone-straight" },
-      { label: "Jet Silk", slug: "jet-silk" },
+      { label: 'Luxe Straight', slug: 'luxe-straight' },
+      { label: 'Bone Straight', slug: 'bone-straight' },
+      { label: 'Jet Silk', slug: 'jet-silk' },
     ],
   },
   {
-    label: "Yaki",
+    label: 'Yaki',
     submenu: [
-      { label: "Yaki Blowout", slug: "yaki-blowout" },
-      { label: "Yaki Relaxed", slug: "yaki-relaxed" },
-      { label: "Silky Yaki", slug: "silky-yaki" },
+      { label: 'Yaki Blowout', slug: 'yaki-blowout' },
+      { label: 'Yaki Relaxed', slug: 'yaki-relaxed' },
+      { label: 'Silky Yaki', slug: 'silky-yaki' },
     ],
   },
   {
-    label: "Wavy",
+    label: 'Wavy',
     submenu: [
-      { label: "Ocean Wave", slug: "ocean-wave" },
-      { label: "Deep Wavy", slug: "deep-wavy" },
-      { label: "Hollywood Curls", slug: "hollywood-curls" },
+      { label: 'Ocean Wave', slug: 'ocean-wave' },
+      { label: 'Deep Wavy', slug: 'deep-wavy' },
+      { label: 'Hollywood Curls', slug: 'hollywood-curls' },
     ],
   },
   {
-    label: "Kinky",
+    label: 'Kinky',
     submenu: [
-      { label: "Kinky Coily", slug: "kinky-coily" },
-      { label: "Afro Kinks", slug: "afro-kinks" },
-      { label: "Kinky Curly", slug: "kinky-curly" },
+      { label: 'Kinky Coily', slug: 'kinky-coily' },
+      { label: 'Afro Kinks', slug: 'afro-kinks' },
+      { label: 'Kinky Curly', slug: 'kinky-curly' },
     ],
   },
-  { label: "Contact", path: "/contact" },
+  { label: 'Contact', path: '/contact' },
 ];
 
 const dropdownVariants: Variants = {
   hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
-  exit: { opacity: 0, y: -10, transition: { duration: 0.2, ease: "easeIn" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2, ease: 'easeIn' } },
 };
 
 const mobileMenuVariants: Variants = {
-  hidden: { x: "100%" },
-  visible: { x: 0, transition: { duration: 0.3, ease: "easeOut" } },
-  exit: { x: "100%", transition: { duration: 0.2, ease: "easeIn" } },
+  hidden: { x: '100%' },
+  visible: { x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { x: '100%', transition: { duration: 0.2, ease: 'easeIn' } },
 };
 
-// Variants for the scroll-reactive navigation links
 const navLinksVariants: Variants = {
-  visible: { y: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },
-  hidden: { y: -50, opacity: 0, transition: { duration: 0.2, ease: "easeIn" } }, // Slide up and fade out
+  visible: { y: 0, opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+  hidden: { y: -50, opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } },
 };
 
 const Navbar = () => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [scrolledDown, setScrolledDown] = useState(false); // New state for scroll detection
-  const lastScrollY = useRef(0); // Ref to store the last scroll position
-
+  const [scrolledDown, setScrolledDown] = useState(false);
+  const lastScrollY = useRef(0);
   const navigate = useNavigate();
-  const { totalItems } = useCart(); // Using the mock useCart for demonstration
+  const { totalItems } = useCart();
+
+  // Handler for AnnouncementBanner's onShowDiscountPopup
+  const handleShowDiscountPopup = () => {
+    // Implement your discount popup logic here, e.g., open a modal or navigate
+    console.log('Show discount popup'); // Placeholder for actual implementation
+    // Example: navigate('/discount') or setModalOpen(true)
+  };
 
   const handleMouseEnter = (label: string, hasSubmenu: boolean) => {
     if (hasSubmenu) setActiveSubmenu(label);
@@ -129,39 +129,32 @@ const Navbar = () => {
   // Effect to handle scroll behavior
   useEffect(() => {
     const handleScroll = () => {
-      // Determine scroll direction and threshold
       const currentScrollY = window.scrollY;
-      // Adjust scroll threshold to account for banner height if banner is part of initial view
-      const scrollThreshold = 100; // Pixels scrolled down before hiding
+      const scrollThreshold = 100;
 
       if (currentScrollY > scrollThreshold && currentScrollY > lastScrollY.current) {
-        // Scrolled down past threshold
         setScrolledDown(true);
       } else if (currentScrollY <= scrollThreshold || currentScrollY < lastScrollY.current) {
-        // Scrolled up or back within threshold
         setScrolledDown(false);
       }
-      lastScrollY.current = currentScrollY; // Update last scroll position
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    // Cleanup: remove event listener when component unmounts
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+  }, []);
 
   return (
-    // The main nav container will adjust its height based on the hidden section and the banner
     <nav
       className={`w-full bg-white fixed top-0 left-0 z-50 shadow-sm transition-all duration-300 ease-in-out`}
-      // Adjust height based on scroll state. Banner adds approx 32px (2rem)
-      style={{ fontFamily: "'Quattrocento Sans', sans-serif",
-               height: scrolledDown ? 'calc(theme(height.16) + 2rem)' : 'calc(theme(height.32) + 2rem)'
-             }}
+      style={{
+        fontFamily: "'Quattrocento Sans', sans-serif",
+        height: scrolledDown ? 'calc(theme(height.16) + 2rem)' : 'calc(theme(height.32) + 2rem)',
+      }}
     >
-      <AnnouncementBanner /> {/* The announcement banner is now part of the Navbar */}
+      <AnnouncementBanner onShowDiscountPopup={handleShowDiscountPopup} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-20">
         <button
           onClick={toggleSearch}
@@ -177,7 +170,7 @@ const Navbar = () => {
             className="h-12 md:h-14 w-auto cursor-pointer"
             initial={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           />
         </Link>
         <div className="flex items-center space-x-4 md:order-3">
@@ -200,18 +193,36 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+      {/* Search Bar */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            className="bg-white px-4 py-3 border-b border-gray-200 md:hidden"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <input
+              type="text"
+              placeholder="Search hair styles..."
+              className="w-full px-4 py-2 text-[#0E0E0E] text-base border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Horizontal line - still hidden on mobile */}
       <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mx-6 hidden md:block"></div>
 
       {/* Scroll-reactive navigation links section for desktop */}
       <AnimatePresence>
-        {!scrolledDown && ( // Only render when not scrolled down
+        {!scrolledDown && (
           <motion.div
             className="bg-white hidden md:block w-full"
             variants={navLinksVariants}
-            initial="hidden" // Start hidden or from a higher Y position
-            animate="visible" // Animate to visible
-            exit="hidden" // Animate to hidden when unmounting
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
           >
             <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
               <ul className="flex justify-center space-x-12 py-4">
@@ -231,7 +242,7 @@ const Navbar = () => {
                           to={item.path}
                           className={({ isActive }) =>
                             `text-[#0E0E0E] text-[14px] leading-[18.2px] font-normal tracking-[0.6px] hover:opacity-70 transition-all duration-300 py-2 px-1 ${
-                              isActive ? "font-medium border-b-2 border-[#0E0E0E]" : ""
+                              isActive ? 'font-medium border-b-2 border-[#0E0E0E]' : ''
                             }`
                           }
                         >
@@ -286,7 +297,7 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            className="fixed inset-0 bg-white z-40 md:hidden flex flex-col pt-16 pb-4" // Note: pt-16 might need adjustment if banner is always fixed
+            className="fixed inset-0 bg-white z-40 md:hidden flex flex-col pt-16 pb-4"
             variants={mobileMenuVariants}
             initial="hidden"
             animate="visible"
@@ -305,7 +316,7 @@ const Navbar = () => {
                           onClick={toggleMobileMenu}
                           className={({ isActive: navActive }) =>
                             `block text-[#0E0E0E] text-lg font-medium py-3 px-2 border-b border-gray-100 ${
-                              navActive ? "font-bold text-black" : ""
+                              navActive ? 'font-bold text-black' : ''
                             }`
                           }
                         >
@@ -321,9 +332,7 @@ const Navbar = () => {
                           >
                             <span>{item.label}</span>
                             {hasSubmenu && (
-                              <span className="text-gray-500 text-xl">
-                                {isActive ? "−" : "+"}
-                              </span>
+                              <span className="text-gray-500 text-xl">{isActive ? '−' : '+'}</span>
                             )}
                           </button>
                           <AnimatePresence>
