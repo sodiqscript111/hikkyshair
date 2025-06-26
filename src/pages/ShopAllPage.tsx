@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../data/products';
 import { products } from '../data/products'; // Assuming products data is exported from this file
 
-// ProductCard component (reused from ProductSlider)
+// ProductCard component (reused from ProductSlider) - No changes needed here, as it's for ShopAll/Collections
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(product.image);
 
@@ -13,13 +13,11 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       className="flex flex-col w-full overflow-hidden cursor-pointer"
     >
       <div
-        // FIX: Use padding-top for intrinsic aspect ratio, remove fixed height
-        className="relative w-full overflow-hidden pt-[133.33%] sm:pt-[100%]" // 3:4 aspect ratio (h/w = 4/3 = 1.3333 = 133.33%) for mobile, 1:1 for larger screens
+        className="relative w-full overflow-hidden pt-[133.33%] sm:pt-[100%]"
       >
         <img
           src={currentImage}
           alt={`${product.name} hair extension`}
-          // FIX: Position absolutely to fit container based on padding-top
           className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-300 ease-in-out"
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -43,6 +41,40 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
 // ShopAllPage component
 const ShopAllPage: React.FC = () => {
+  // State to manage the products currently displayed, which will be sorted
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  // State to manage the current sorting order selected by the user
+  const [sortOrder, setSortOrder] = useState<string>(''); // Default empty or a specific initial sort
+
+  // useEffect to initialize products when the component mounts
+  // and to re-sort them whenever the sortOrder changes
+  useEffect(() => {
+    // Create a mutable copy of the products array for sorting
+    const sorted = [...products];
+
+    switch (sortOrder) {
+      case 'price-low':
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        // Default sort (e.g., by ID or original order if no sort is selected)
+        // For now, it will maintain the order as it is in the imported 'products' array
+        break;
+    }
+    setDisplayedProducts(sorted); // Update the state with the sorted products
+  }, [sortOrder]); // Re-run this effect whenever sortOrder changes
+
+  // Event handler for when the user selects a new sorting option
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOrder(event.target.value); // Update the sortOrder state
+  };
+
   return (
     <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[70px] font-inter">
       {/* Header */}
@@ -61,16 +93,15 @@ const ShopAllPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Optional Filters (Placeholder) */}
+      {/* Optional Filters */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-        {/* FIX: Add flex-col and space-y for better mobile stacking */}
         <p className="text-[#444] text-sm font-semibold">
-          {products.length} Products
+          {displayedProducts.length} Products {/* Display count based on sorted products */}
         </p>
         <select
           className="border border-gray-300 rounded-md p-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-800 w-full sm:w-auto"
-          // FIX: Make select full width on mobile, auto on larger
-          defaultValue=""
+          value={sortOrder} // Control the select element with state
+          onChange={handleSortChange} // Attach the change handler
         >
           <option value="" disabled>
             Sort by
@@ -83,8 +114,8 @@ const ShopAllPage: React.FC = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        {/* FIX: Changed `sm:grid-cols-3` to `md:grid-cols-3` for better mobile 2-column layout */}
-        {products.map((product) => (
+        {/* Map over displayedProducts instead of original 'products' */}
+        {displayedProducts.map((product) => (
           <div key={product.id} className="product-card">
             <ProductCard product={product} />
           </div>

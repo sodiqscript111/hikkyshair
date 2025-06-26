@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Product} from '../data/products';
 import { products } from '../data/products';
@@ -66,7 +66,7 @@ const CollectionPage: React.FC = () => {
   }, [collectionSlug]);
 
   return (
-    <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[70px] font-inter">
+    <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[120px] font-inter">
       {/* Header */}
       <div className="text-center mb-10">
         <h1

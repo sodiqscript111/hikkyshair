@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-// Import your video files directly
+
 import header1Video from '../assets/header1.mp4'; // Adjust this path based on your exact structure
 import header2Video from '../assets/header2.mp4'; // Adjust this path based on your exact structure
 

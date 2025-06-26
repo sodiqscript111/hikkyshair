@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CustomizationPopup from "../components/CustomizationPopup";
-import type { Product} from "../data/products";
+import type { Product } from "../data/products";
 import { products } from "../data/products";
 import { useCart } from "../CartContext";
+import { XMarkIcon } from '@heroicons/react/24/outline'; // For toast close button
 
 const CheckoutPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,7 +15,14 @@ const CheckoutPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCustomizationChecked, setIsCustomizationChecked] = useState(false);
   const [showCustomizationPopup, setShowCustomizationPopup] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  // State for image slider
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // State for toast notifications
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('info');
+
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -27,10 +35,28 @@ const CheckoutPage: React.FC = () => {
     if (foundProduct) {
       setProduct(foundProduct);
       setSelectedSize(foundProduct.sizes[0] || '');
+      setCurrentImageIndex(0); // Reset slider to first image when product changes
     } else {
       setProduct(null);
     }
   }, [id]);
+
+  // Handle toast message display and auto-hide
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => {
+        setToastMessage(null);
+      }, 3000); // Hide after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToastMessage(message);
+    setToastType(type);
+  };
+
 
   const handleQuantityChange = (type: "increase" | "decrease") => {
     setQuantity((prev) => {
@@ -43,17 +69,19 @@ const CheckoutPage: React.FC = () => {
   const handleAddToCart = () => {
     if (product && selectedSize) {
       addToCart(product.id, selectedSize, quantity, product.price, product.name);
-      alert(`${quantity} x ${product.name} (Size: ${selectedSize}) added to cart!`);
+      showToast(`${quantity} x ${product.name} (Size: ${selectedSize}) added to cart!`, 'success');
     } else {
-      alert('Please select a size before adding to cart.');
+      showToast('Please select a size before adding to cart.', 'error');
     }
   };
 
   const handleBuyNow = () => {
     if (product && selectedSize) {
       console.log(`Buying ${quantity} of ${product.name} (Size: ${selectedSize}) now.`);
+      showToast(`Proceeding to buy ${quantity} of ${product.name}.`, 'info');
+      // In a real app, you'd navigate to a checkout confirmation page here
     } else {
-      alert('Please select a size before proceeding.');
+      showToast('Please select a size before proceeding.', 'error');
     }
   };
 
@@ -64,20 +92,85 @@ const CheckoutPage: React.FC = () => {
 
   const handleCustomizationSubmit = (data: { name: string; email: string; description: string }) => {
     console.log("Customization Request Submitted:", data);
-    alert("Your customization request has been submitted!");
+    showToast("Your customization request has been submitted!", 'success');
     setShowCustomizationPopup(false);
   };
+
+  const handleThumbnailClick = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  const goToNextImage = () => {
+    if (product) {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % product.images.length);
+    }
+  };
+
+  const goToPrevImage = () => {
+    if (product) {
+      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + product.images.length) % product.images.length);
+    }
+  };
+
 
   if (!product) {
     return <div className="text-center mt-20 text-xl text-gray-700">Product not found</div>;
   }
 
+  const currentProductImage = product.images[currentImageIndex];
+
+
   return (
-    <div className="flex flex-col mt-[100px] md:flex-row min-h-screen w-full font-sans bg-white">
-      {/* Left Section */}
+    <div className="flex flex-col mt-[100px] md:flex-row min-h-screen w-full font-sans bg-white md:bg-gray-50"> {/* FIX: Changed to flex-col for mobile order */}
+      
+      {/* Image Slider Section (now comes first on mobile) */}
+      <div className="w-full md:w-1/2 flex flex-col p-4 md:p-8 bg-white md:bg-transparent"> {/* Added flex-col for internal layout */}
+        {/* Main Image */}
+        <div className="relative w-full h-[50vh] md:h-full flex items-center justify-center rounded-lg overflow-hidden shadow-lg bg-gray-100"> {/* Dynamic height for slider section */}
+            <img
+                src={currentProductImage}
+                alt={`${product.name} - View ${currentImageIndex + 1}`}
+                className="w-full h-full object-contain transition-transform duration-300 ease-in-out transform hover:scale-105"
+            />
+            {/* Navigation Buttons */}
+            <button
+                onClick={goToPrevImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 text-white p-2 rounded-full z-10 transition"
+                aria-label="Previous image"
+            >
+                &larr;
+            </button>
+            <button
+                onClick={goToNextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 text-white p-2 rounded-full z-10 transition"
+                aria-label="Next image"
+            >
+                &rarr;
+            </button>
+        </div>
+
+        {/* Thumbnails */}
+        <div className="flex justify-center gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+          {product.images.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              alt={`Thumbnail ${index + 1}`}
+              className={`w-16 h-16 object-cover rounded-md cursor-pointer border-2 transition-all duration-200 
+                ${index === currentImageIndex ? 'border-[#f2e7dd] shadow-md' : 'border-transparent hover:border-gray-300'}`}
+              onClick={() => handleThumbnailClick(index)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Product Details Section (now comes second on mobile) */}
       <div className="w-full md:w-1/2 px-6 md:px-16 py-10 flex flex-col justify-start space-y-6 bg-[#f2e7dd]/20">
         <h1 className="text-4xl md:text-5xl font-semibold text-[#121212]">{product.name}</h1>
         <p className="text-gray-700 text-base md:text-lg">{product.description}</p>
+        <div className="text-3xl font-bold text-[#121212]">
+            ₦{product.price.toLocaleString('en-NG')} {product.currency}
+        </div>
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-2 text-[#121212]">Choose a size</h3>
           <div className="flex flex-wrap gap-3">
@@ -127,16 +220,16 @@ const CheckoutPage: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="flex flex-row space-x-4">
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"> {/* Changed to flex-col on mobile */}
             <button
               onClick={handleAddToCart}
-              className="w-1/2 bg-[#f2e7dd] text-[#121212] py-2 rounded-md text-base font-semibold hover:bg-[#e8d9cc] transition-colors duration-300 transform hover:scale-105"
+              className="w-full sm:w-1/2 bg-[#f2e7dd] text-[#121212] py-3 rounded-md text-base font-semibold hover:bg-[#e8d9cc] transition-colors duration-300 transform hover:scale-105 shadow-md"
             >
               Add to Cart
             </button>
             <button
               onClick={handleBuyNow}
-              className="w-1/2 bg-white text-[#121212] border border-[#f2e7dd] py-2 rounded-md text-base font-semibold hover:bg-[#f2e7dd]/50 transition-colors duration-300 transform hover:scale-105"
+              className="w-full sm:w-1/2 bg-white text-[#121212] border border-[#f2e7dd] py-3 rounded-md text-base font-semibold hover:bg-[#f2e7dd]/50 transition-colors duration-300 transform hover:scale-105 shadow-md"
             >
               Buy Now
             </button>
@@ -169,45 +262,28 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Right Section - Bento Grid */}
-      <div className="w-full md:w-1/2 h-[70vh] overflow-y-scroll scrollbar-hide border-l border-[#f2e7dd] p-4">
-        <div className="grid grid-cols-2 gap-4 auto-rows-[minmax(120px, auto)]">
-          {product.images.map((img, idx) => (
-            <div
-              key={idx}
-              onClick={() => setSelectedImage(img)}
-              className={`
-                ${idx === 0 ? "col-span-2 row-span-2" : ""}
-                cursor-pointer relative overflow-hidden shadow-lg group hover:scale-[1.03] transition-transform duration-300 ease-in-out
-              `}
-            >
-              <img
-                src={img}
-                alt={`Product view ${idx + 1} of ${product.name}`}
-                className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      {selectedImage && (
-        <div
-          onClick={() => setSelectedImage(null)}
-          className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-md flex items-center justify-center z-50"
-        >
-          <img
-            src={selectedImage}
-            alt={`Full view of ${product.name}`}
-            className="max-w-[90%] max-h-[90%] rounded-lg shadow-xl object-contain"
-          />
-        </div>
-      )}
+
       {showCustomizationPopup && (
         <CustomizationPopup
           onClose={() => setShowCustomizationPopup(false)}
           onSubmit={handleCustomizationSubmit}
         />
       )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg flex items-center justify-between z-50
+          ${toastType === 'success' ? 'bg-green-500 text-white' : ''}
+          ${toastType === 'error' ? 'bg-red-500 text-white' : ''}
+          ${toastType === 'info' ? 'bg-gray-800 text-white' : ''}
+        `}>
+          <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="ml-4 text-white">
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
       <style>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

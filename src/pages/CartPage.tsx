@@ -17,7 +17,7 @@ const CartPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[100px] font-inter min-h-screen">
+    <div className="w-full py-6 px-4 sm:px-6 lg:px-8 mt-[150px] font-inter min-h-screen">
       <div className="max-w-7xl mx-auto">
         <h1
           className="text-[#121212] font-serif font-normal text-4xl sm:text-5xl text-center mb-10"
