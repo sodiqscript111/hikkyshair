@@ -81,7 +81,6 @@ const BeforeAfterSlider: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      // Mobile: max-h-70vh for responsiveness, md:h-[550px] for larger screens
       className="relative w-full max-h-[70vh] md:h-[550px] overflow-hidden select-none group border border-black"
       onMouseDown={startDrag}
       onTouchStart={startDrag}
@@ -147,9 +146,15 @@ const HikkiyHairSection: React.FC = () => {
         <p className="text-[18px] text-black mb-6 leading-relaxed">
           At Hikkiy's Hair, we specialize in premium hair extensions and styles that highlight your natural beauty.
         </p>
-        <button className="bg-white text-black border border-black px-6 py-3 text-sm uppercase font-semibold hover:bg-black hover:text-white transition-colors">
+        <a
+          href="https://www.fresha.com/a/the-hikkys-hair-studio-lagos-block-111-plot-26a-daniyan-natalia-street-off-oladimeji-alo-street-freedom-way-lekki-phase-1-q57mqdmb/booking?menu=true&utm_source=instagram"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-white text-black border border-black px-6 py-3 text-sm uppercase font-semibold hover:bg-black hover:text-white transition-colors"
+          aria-label="Book your appointment now"
+        >
           Book Now
-        </button>
+        </a>
       </div>
 
       {/* Before/After Comparison */}

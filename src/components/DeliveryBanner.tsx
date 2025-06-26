@@ -17,7 +17,7 @@ const DeliveryBanner: React.FC = () => {
 
       <div className="mt-10">
         <WorldMap
-          lineColor="#0ea5e9"
+          lineColor="#000"
           dots={[
             { start: { lat: 6.5244, lng: 3.3792 }, end: { lat: 51.5074, lng: -0.1278 } }, // Lagos → London
             { start: { lat: 40.7128, lng: -74.0060 }, end: { lat: 35.6895, lng: 139.6917 } }, // NY → Tokyo

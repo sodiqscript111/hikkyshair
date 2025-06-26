@@ -8,7 +8,9 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(product.image);
 
   return (
-    <Link to={`/checkout/${product.id}`} className="flex flex-col flex-shrink-0 w-[335px] overflow-hidden cursor-pointer">
+    // Adjusted width for mobile screens: calc(50% - gap) for 'sm' and larger, full width for smaller.
+    // Reverts to md:w-[335px] for medium screens and up.
+    <Link to={`/checkout/${product.id}`} className="flex flex-col flex-shrink-0 w-full sm:w-[calc(50%-10px)] md:w-[335px] overflow-hidden cursor-pointer">
       <div className="relative w-full overflow-hidden" style={{ height: '335px' }}>
         <img
           src={currentImage}
@@ -68,6 +70,8 @@ const ProductSlider: React.FC = () => {
       threshold: 0.1,
     });
 
+    // We need to query for elements with 'product-card' class directly under the scrollContainer
+    // to ensure the observer targets the correct elements after width changes.
     const cards = scrollContainer.querySelectorAll('.product-card');
     cards.forEach((card) => observer.observe(card));
 
@@ -77,30 +81,30 @@ const ProductSlider: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full py-1 px-10 mt-[70px] md:px-1 lg:px-2 font-inter">
+    <div className="w-full py-1 px-4 mt-[70px] md:px-1 lg:px-2 font-inter"> {/* Adjusted px-10 to px-4 for mobile */}
       <h2
-        className="text-[#121212]  font-serif font-normal"
+        className="text-[#121212] font-serif font-normal text-3xl md:text-4xl lg:text-5xl" // Responsive font size
         style={{
-          fontSize: '38px',
-          lineHeight: '37px',
+          lineHeight: '1.2', // Adjusted for responsiveness
           letterSpacing: '0.8px',
           marginBottom: '24px',
-          marginLeft:'40px'
+          marginLeft: '0px', // Removed fixed left margin for mobile centering
+          textAlign: 'center', // Centered for mobile
         }}
       >
         Our new arrival
       </h2>
-      <p className="text-[#121212c7] text-lg md:text-lg mb-10 max-w-2xl ml-[40px]">
+      <p className="text-[#121212c7] text-base md:text-lg mb-10 max-w-2xl mx-auto text-center"> {/* Centered for mobile */}
         Discover the latest additions to our exquisite collection of premium hair extensions.
         Fresh styles, superior quality.
       </p>
       <div className="relative">
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto snap-x snap-mandatory pb-5 space-x-5 custom-scrollbar-hide"
+          className="flex overflow-x-auto snap-x snap-mandatory pb-5 space-x-4 custom-scrollbar-hide px-4 sm:px-0 justify-start sm:justify-center" // Adjusted space-x and px for mobile
         >
           {products.map((product) => (
-            <div key={product.id} id={`product-${product.id}`} className="snap-start product-card">
+            <div key={product.id} id={`product-${product.id}`} className="snap-start product-card flex-shrink-0">
               <ProductCard product={product} />
             </div>
           ))}
