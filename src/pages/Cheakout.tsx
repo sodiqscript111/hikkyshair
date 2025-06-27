@@ -121,12 +121,12 @@ const CheckoutPage: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col mt-[100px] md:flex-row min-h-screen w-full font-sans bg-white md:bg-gray-50"> {/* FIX: Changed to flex-col for mobile order */}
+    <div className="flex flex-col ml-[140px] mt-[200px] md:flex-row  h-[650px] w-[80%] font-sans bg-white md:bg-gray-50"> {/* FIX: Changed to flex-col for mobile order */}
       
       {/* Image Slider Section (now comes first on mobile) */}
-      <div className="w-full md:w-1/2 flex flex-col p-4 md:p-8 bg-white md:bg-transparent"> {/* Added flex-col for internal layout */}
+      <div className="w-full md:w-1/2 flex flex-col p-4 md:p-8  md:bg-transparent"> {/* Added flex-col for internal layout */}
         {/* Main Image */}
-        <div className="relative w-full h-[50vh] md:h-full flex items-center justify-center rounded-lg overflow-hidden shadow-lg bg-gray-100"> {/* Dynamic height for slider section */}
+        <div className="relative w-full h-[50vh] md:h-full flex items-center justify-center rounded-lg overflow-hidden shadow-lg"> {/* Dynamic height for slider section */}
             <img
                 src={currentProductImage}
                 alt={`${product.name} - View ${currentImageIndex + 1}`}
@@ -273,7 +273,7 @@ const CheckoutPage: React.FC = () => {
       {/* Toast Notification */}
       {toastMessage && (
         <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg flex items-center justify-between z-50
-          ${toastType === 'success' ? 'bg-green-500 text-white' : ''}
+          ${toastType === 'success' ? 'bg- text-white' : ''}
           ${toastType === 'error' ? 'bg-red-500 text-white' : ''}
           ${toastType === 'info' ? 'bg-gray-800 text-white' : ''}
         `}>
